@@ -32,7 +32,7 @@ class ConvBlock(nn.Module):
 
 
 class Model(nn.Module):
-    def __init__(self, relu_type, pool_type, elu_val = 1, lrelu_val = .01): # elu_val refers to the alpha arg, lrelu_val refers to the negative slope arg
+    def __init__(self, relu_type, pool_type, img_size, elu_val = 1, lrelu_val = .01): # elu_val refers to the alpha arg, lrelu_val refers to the negative slope arg
         super(Model, self).__init__()
         self.layers = nn.Sequential(
         ConvBlock(relu_type, pool_type, 3, 16, elu_val, lrelu_val),
@@ -41,7 +41,7 @@ class Model(nn.Module):
         ConvBlock(relu_type, pool_type, 64, 128, elu_val, lrelu_val),
         ConvBlock(relu_type, pool_type, 128, 256, elu_val, lrelu_val),
         nn.Flatten(),
-        nn.Linear(256 * 24 * 24, 1024),
+        nn.Linear(256 * int((img_size / 32)**2), 1024),
         nn.BatchNorm1d(1024),
         nn.Linear(1024, 512),
         nn.BatchNorm1d(512),
@@ -54,4 +54,4 @@ class Model(nn.Module):
 
 possible_activation_inputs = ['relu', 'lrelu', 'anything else'] # just for reference (anything else will end up using ELU)
 possible_pool_inputs = ['avg' , 'anything else'] # just for reference (anything else will end up using maxpooling)
-model = Model('relu', 'max') # example instance where activation is ReLU and pooling is maxpooling
+model = Model('relu', 'max', 128) # example instance where activation is ReLU and pooling is maxpooling
