@@ -20,7 +20,7 @@ class ConvBlock(nn.Module):
         if pool_type == 'avg':
             self.pool = nn.AvgPool2d(2, 2)
         else:
-            self.pool = nn.MaxPool2d(2, 2)
+            self.pool = nn.MaxPool2d(2, 2, ceil_mode = True)
         
         self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size = 3, padding = 1)
         self.bn = nn.BatchNorm2d(out_channels)
@@ -40,10 +40,9 @@ class Model(nn.Module):
         ConvBlock(relu_type, pool_type, 32, 64, elu_val, lrelu_val),
         ConvBlock(relu_type, pool_type, 64, 128, elu_val, lrelu_val),
         ConvBlock(relu_type, pool_type, 128, 256, elu_val, lrelu_val),
-
+        nn.Flatten(),
         nn.Linear(256 * 24 * 24, 1024),
         nn.BatchNorm1d(1024),
-        
         nn.Linear(1024, 512),
         nn.BatchNorm1d(512),
 
@@ -55,4 +54,4 @@ class Model(nn.Module):
 
 possible_activation_inputs = ['relu', 'lrelu', 'anything else'] # just for reference (anything else will end up using ELU)
 possible_pool_inputs = ['avg' , 'anything else'] # just for reference (anything else will end up using maxpooling)
-model = Model('relu', 'max', elu_val = 1, lrelu_val = .01) # example instance where activation is ReLU and pooling is maxpooling
+model = Model('relu', 'max') # example instance where activation is ReLU and pooling is maxpooling
