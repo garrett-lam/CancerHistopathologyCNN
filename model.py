@@ -35,18 +35,17 @@ class Model(nn.Module):
     def __init__(self, relu_type, pool_type, img_size, elu_val = 1, lrelu_val = .01): # elu_val refers to the alpha arg, lrelu_val refers to the negative slope arg
         super(Model, self).__init__()
         self.layers = nn.Sequential(
-        ConvBlock(relu_type, pool_type, 3, 16, elu_val, lrelu_val),
-        ConvBlock(relu_type, pool_type, 16, 32, elu_val, lrelu_val),
-        ConvBlock(relu_type, pool_type, 32, 64, elu_val, lrelu_val),
-        ConvBlock(relu_type, pool_type, 64, 128, elu_val, lrelu_val),
-        ConvBlock(relu_type, pool_type, 128, 256, elu_val, lrelu_val),
-        nn.Flatten(),
-        nn.Linear(256 * int((img_size / 32)**2), 1024),
-        nn.BatchNorm1d(1024),
-        nn.Linear(1024, 512),
-        nn.BatchNorm1d(512),
-
-        nn.Linear(512, 10) # i'm not sure why output is 10 when there are 5 classes, but I'll leave it as it is. feel free to change it 
+            ConvBlock(relu_type, pool_type, 3, 16, elu_val, lrelu_val),
+            ConvBlock(relu_type, pool_type, 16, 32, elu_val, lrelu_val),
+            ConvBlock(relu_type, pool_type, 32, 64, elu_val, lrelu_val),
+            ConvBlock(relu_type, pool_type, 64, 128, elu_val, lrelu_val),
+            ConvBlock(relu_type, pool_type, 128, 256, elu_val, lrelu_val),
+            nn.Flatten(),
+            nn.Linear(256 * int((img_size / 32)**2), 1024),
+            nn.BatchNorm1d(1024),
+            nn.Linear(1024, 512),
+            nn.BatchNorm1d(512),
+            nn.Linear(512, 5)
         )
     
     def forward(self, x):
