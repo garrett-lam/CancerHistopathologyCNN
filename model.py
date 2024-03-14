@@ -7,7 +7,7 @@ class ConvBlock(nn.Module):
     in_channels: input for first conv layer in the block
     out_channels: output for first conv layer, and input and output for second conv layer in the block. also used for nn.BatchNorm2d
     '''
-    def __init__(self, relu_type, pool_type, in_channels, out_channels, elu_val = 1, lrelu_val = .01):
+    def __init__(self, relu_type, pool_type, in_channels, out_channels, elu_val = 1, lrelu_val = 0.01):
         super(ConvBlock, self).__init__()
 
         if relu_type == 'relu':
@@ -32,7 +32,7 @@ class ConvBlock(nn.Module):
 
 
 class Model(nn.Module):
-    def __init__(self, relu_type, pool_type, img_size, elu_val = 1, lrelu_val = .01): # elu_val refers to the alpha arg, lrelu_val refers to the negative slope arg
+    def __init__(self, relu_type, pool_type, img_size, elu_val = 1, lrelu_val = 0.01): # elu_val refers to the alpha arg, lrelu_val refers to the negative slope arg
         super(Model, self).__init__()
         self.layers = nn.Sequential(
             ConvBlock(relu_type, pool_type, 3, 16, elu_val, lrelu_val),
