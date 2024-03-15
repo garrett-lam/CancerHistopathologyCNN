@@ -70,10 +70,10 @@ class BaseCNN(nn.Module):
             nn.Flatten(),
             nn.Linear(256 * int((img_size / 8)**2), 1024),
             nn.BatchNorm1d(1024),
-            self.act(),
+            self.act,
             nn.Linear(1024, 512),
             nn.BatchNorm1d(512),
-            self.act(),
+            self.act,
             nn.Linear(512, 5)
         )
 
