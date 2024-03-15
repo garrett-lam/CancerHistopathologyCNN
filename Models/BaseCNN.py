@@ -20,7 +20,7 @@ class ConvBlock(nn.Module):
         if pool_type == 'avg':
             self.pool = nn.AvgPool2d(2, 2)
         else:
-            self.pool = nn.MaxPool2d(2, 2, ceil_mode = True)
+            self.pool = nn.MaxPool2d(2, 2) #ceil_mode = True)
         
         self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size = 3, padding = 1)
         self.bn = nn.BatchNorm2d(out_channels)
@@ -35,23 +35,41 @@ class ConvBlock(nn.Module):
 class BaseCNN(nn.Module):
     def __init__(self, relu_type, pool_type, img_size, elu_val = 1, lrelu_val = 0.01): # elu_val refers to the alpha arg, lrelu_val refers to the negative slope arg
         super(BaseCNN, self).__init__()
+        # self.layers = nn.Sequential(
+        #     ConvBlock(relu_type, pool_type, 3, 16, elu_val, lrelu_val),
+        #     ConvBlock(relu_type, pool_type, 16, 32, elu_val, lrelu_val),
+        #     ConvBlock(relu_type, pool_type, 32, 64, elu_val, lrelu_val),
+        #     ConvBlock(relu_type, pool_type, 64, 128, elu_val, lrelu_val),
+        #     ConvBlock(relu_type, pool_type, 128, 256, elu_val, lrelu_val),
+        #     nn.Flatten(),
+        #     nn.Linear(256 * int((img_size / 32)**2), 1024),
+        #     nn.BatchNorm1d(1024),
+        #     nn.Linear(1024, 512),
+        #     nn.BatchNorm1d(512),
+        #     nn.Linear(512, 5)
+        # )
+        
         self.layers = nn.Sequential(
-            ConvBlock(relu_type, pool_type, 3, 16, elu_val, lrelu_val),
-            ConvBlock(relu_type, pool_type, 16, 32, elu_val, lrelu_val),
-            ConvBlock(relu_type, pool_type, 32, 64, elu_val, lrelu_val),
+            #Block1 (different to the other ConvBlocks)
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),
+            nn.BatchNorm2d(32),
+            nn.Conv2d(32, 64, kernel_size=3, padding=1),
+            nn.BatchNorm2d(64),
+            nn.MaxPool2d(2, 2),
+
             ConvBlock(relu_type, pool_type, 64, 128, elu_val, lrelu_val),
             ConvBlock(relu_type, pool_type, 128, 256, elu_val, lrelu_val),
+
             nn.Flatten(),
-            nn.Linear(256 * int((img_size / 32)**2), 1024),
+            nn.Linear(256 * int((img_size / 8)**2), 1024),
             nn.BatchNorm1d(1024),
+            nn.ReLU(),
             nn.Linear(1024, 512),
             nn.BatchNorm1d(512),
+            nn.ReLU(),
             nn.Linear(512, 5)
         )
+
     
     def forward(self, x):
         return self.layers(x)
-
-possible_activation_inputs = ['relu', 'lrelu', 'anything else'] # just for reference (anything else will end up using ELU)
-possible_pool_inputs = ['avg' , 'anything else'] # just for reference (anything else will end up using maxpooling)
-model = BaseCNN('relu', 'max', 128) # example instance where activation is ReLU and pooling is maxpooling

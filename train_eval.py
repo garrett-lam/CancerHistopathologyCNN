@@ -84,6 +84,7 @@ def testNN(network, test_loader, classes, device):
             outputs = network(images) # Forward
             
             _, predicted = torch.max(outputs, 1) # Get the predictions from the maximum value
+            print(predicted)
             correct = (predicted == labels).squeeze() # Compare predictions with the true label
             
             # Update lists 
