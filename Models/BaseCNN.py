@@ -48,7 +48,14 @@ class BaseCNN(nn.Module):
         #     nn.BatchNorm1d(512),
         #     nn.Linear(512, 5)
         # )
-        
+
+        if relu_type == 'relu':
+            self.act = nn.ReLU()
+        elif relu_type == 'lrelu':
+            self.act = nn.LeakyReLU(lrelu_val)
+        else:
+            self.act = nn.ELU(elu_val)
+
         self.layers = nn.Sequential(
             #Block1 (different to the other ConvBlocks)
             nn.Conv2d(3, 32, kernel_size=3, padding=1),
@@ -63,10 +70,10 @@ class BaseCNN(nn.Module):
             nn.Flatten(),
             nn.Linear(256 * int((img_size / 8)**2), 1024),
             nn.BatchNorm1d(1024),
-            nn.ReLU(),
+            self.act(),
             nn.Linear(1024, 512),
             nn.BatchNorm1d(512),
-            nn.ReLU(),
+            self.act(),
             nn.Linear(512, 5)
         )
 
