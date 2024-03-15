@@ -25,9 +25,10 @@ class ConvBlock(nn.Module):
         self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size = 3, padding = 1)
         self.bn = nn.BatchNorm2d(out_channels)
         self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size = 3, padding = 1)
+        self.dropout = nn.Dropout2d(0.5)
     
     def forward(self, x):
-        return self.pool(self.act(self.bn(self.conv2(self.act(self.bn(self.conv1(x)))))))
+        return self.pool(self.act(self.bn(self.conv2(self.dropout(self.act(self.bn(self.conv1(x))))))))
         
 
 
