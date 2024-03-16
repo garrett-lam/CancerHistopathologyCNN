@@ -27,9 +27,18 @@ def saveModel(model, name):
 def plotTrain(model_train_loss, model_valid_loss):
     plt.figure()
     plt.style.use("seaborn-v0_8")
-    plt.plot(model_train_loss, c = 'r', label = "Training Loss")
-    plt.plot(model_valid_loss, c = 'b', label = "Validation Loss")
+
+    epochs = range(1, len(model_train_loss) + 1) # Start at 1
+    plt.plot(epochs, model_train_loss, c = 'red', label = "Training")
+    plt.plot(epochs, model_valid_loss, c = 'blue', label = "Validation")
+
+    best_epoch = model_valid_loss.index(min(model_valid_loss))+1 
+    best_val_loss = min(model_valid_loss)
+    plt.plot(best_epoch, best_val_loss, 'bo')  
+    plt.text(best_epoch, best_val_loss, f'  Best Epoch = {best_epoch}\n  Loss = {best_val_loss:.3f}', color='blue')
+    
     plt.xlabel("Number of Epochs")
+    plt.xticks(epochs)
     plt.ylabel("Average Epoch Loss")
     plt.title("Training and Validation Loss by Epoch")
     plt.legend()
