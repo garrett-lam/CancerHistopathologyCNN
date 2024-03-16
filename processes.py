@@ -26,10 +26,12 @@ def saveModel(model, name):
 
 def plotTrain(model_train_loss, model_valid_loss):
     plt.figure()
+    plt.style.use("seaborn-v0_8")
     plt.plot(model_train_loss, c = 'r', label = "Training Loss")
     plt.plot(model_valid_loss, c = 'b', label = "Validation Loss")
     plt.xlabel("Number of Epochs")
-    plt.ylabel("Loss")
+    plt.ylabel("Average Epoch Loss")
+    plt.title("Training and Validation Loss by Epoch")
     plt.legend()
     plt.show()
 
