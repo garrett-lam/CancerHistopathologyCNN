@@ -15,9 +15,14 @@ def trainModel(model, activation, pooling, img_size, train_loader, valid_loader,
     early_stopper = EarlyStopper(patience=2, min_delta=3)
     model_train_loss, model_valid_loss = train_and_validateNN(model, train_loader, valid_loader, criterion, optimizer, num_epochs, device, print_freq=100,
                                                                         early_stopper=early_stopper)
-    torch.save(model.state_dict(), f'{activation}-{pooling}.pt')
-
+    if activation and pooling:
+        torch.save(model.state_dict(), f'{activation}-{pooling}.pt')
+    
     return model_train_loss, model_valid_loss
+
+# For other CNNs
+def saveModel(model, name):
+    torch.save(model.state_dict(), f'{name}.pt')
 
 def plotTrain(model_train_loss, model_valid_loss):
     plt.figure()
