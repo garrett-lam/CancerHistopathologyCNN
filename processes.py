@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 def initModel(activation, pooling, img_size, device, elu_val = 1, lrelu_val = .01):
     model = BaseCNN(activation, pooling, img_size, elu_val = 1, lrelu_val = 0.01)
@@ -52,4 +53,23 @@ def loadModel(activation, pooling, img_size, test_loader, classes, device):
     model.load_state_dict(torch.load(f'{activation}-{pooling}.pt'))
     model = model.to(device)
 
-    _ , _ = testNN(model, test_loader, classes, device)
+    return testNN(model, test_loader, classes, device)
+
+def confMtx(preds, labels, act, pool):
+    preds = [item for sublist in preds for item in sublist.tolist()]
+    count = [[0, 0, 0, 0, 0], 
+            [0, 0, 0, 0, 0], 
+            [0, 0, 0, 0, 0], 
+            [0, 0, 0, 0, 0], 
+            [0, 0, 0, 0, 0]]
+    
+    for j in range(5):
+        predsdigit = [preds for preds, labels in zip(preds, labels) if labels == j]
+        for i in range(len(predsdigit)):
+            count[j][predsdigit[i]] += 1
+
+    sns.heatmap(count, annot = True, fmt = 'd', cmap = 'Blues', xticklabels = ['0', '1', '2', '3', '4'])
+    plt.title(f'{act}{pool} Model Confusion Matrix')
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.show()

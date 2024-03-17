@@ -79,11 +79,12 @@ def testNN(network, test_loader, classes, device):
     class_total = list(0. for _ in range(len(classes)))
 
     with torch.no_grad():  # No gradients needed for testing
+        predictions = []
         for images, labels in test_loader:
             images, labels = images.to(device), labels.to(device)
             outputs = network(images) # Forward
-            
             _, predicted = torch.max(outputs, 1) # Get the predictions from the maximum value
+            predictions.append(predicted)
             correct = (predicted == labels).squeeze() # Compare predictions with the true label
             
             # Update lists 
@@ -103,4 +104,4 @@ def testNN(network, test_loader, classes, device):
     for i in range(len(classes)):
         print(f'Accuracy for {classes[i]}: {(class_correct[i]/class_total[i])*100:.1f}%')
     print(f'Overall Model Accuracy: {sum(class_correct)/sum(class_total)*100:.1f}%')
-    return class_accuracies, overall_accuracy
+    return class_accuracies, overall_accuracy, predictions
