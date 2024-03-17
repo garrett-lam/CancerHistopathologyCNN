@@ -20,7 +20,7 @@ class ConvBlock(nn.Module):
         if pool_type == 'avg':
             self.pool = nn.AvgPool2d(2, 2)
         else:
-            self.pool = nn.MaxPool2d(2, 2) #ceil_mode = True)
+            self.pool = nn.MaxPool2d(2, 2)
         
         self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size = 3, padding = 1)
         self.bn = nn.BatchNorm2d(out_channels)
@@ -55,18 +55,23 @@ class BaseCNN(nn.Module):
             self.act = nn.LeakyReLU(lrelu_val)
         else:
             self.act = nn.ELU(elu_val)
+        
+        if pool_type == 'avg':
+            self.pool = nn.AvgPool2d(2, 2)
+        else:
+            self.pool = nn.MaxPool2d(2, 2)
 
         self.layers = nn.Sequential(
-            #Block1 (different to the other ConvBlocks)
+            # Block1 (different to the other ConvBlocks)
             nn.Conv2d(3, 32, kernel_size=3, padding=1),
             nn.BatchNorm2d(32),
             nn.Conv2d(32, 64, kernel_size=3, padding=1),
             nn.BatchNorm2d(64),
-            nn.MaxPool2d(2, 2),
-
+            self.pool,
+            # Block 2 and 3
             ConvBlock(relu_type, pool_type, 64, 128, elu_val, lrelu_val),
             ConvBlock(relu_type, pool_type, 128, 256, elu_val, lrelu_val),
-
+            # Feed-forward linear layers
             nn.Flatten(),
             nn.Linear(256 * int((img_size / 8)**2), 1024),
             nn.BatchNorm1d(1024),
