@@ -3,7 +3,7 @@ from torchvision.models import resnet18, ResNet18_Weights
 
 
 class ResNet18(nn.Module):
-    def __init__(self, num_classes, img_size):
+    def __init__(self, num_classes):
         super(ResNet18, self).__init__()
 
         # Import ResNet18 weights

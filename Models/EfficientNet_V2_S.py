@@ -3,7 +3,7 @@ from torchvision.models import efficientnet_v2_s, EfficientNet_V2_S_Weights
 
 
 class EfficientNet_V2_S(nn.Module):
-    def __init__(self, num_classes, img_size):
+    def __init__(self, num_classes):
         super(EfficientNet_V2_S, self).__init__()
 
         # Import EfficientNet_V2_S weights

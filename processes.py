@@ -1,5 +1,7 @@
 from train_eval import trainNN, validateNN, train_and_validateNN, testNN
 from Models.BaseCNN import BaseCNN
+from Models.ResNet18 import ResNet18
+from Models.EfficientNet_V2_S import EfficientNet_V2_S
 from earlystop import EarlyStopper
 import torch
 import torch.nn as nn
@@ -48,11 +50,19 @@ def plotTrain(model_train_loss, model_valid_loss):
 
     
 
-def loadModel(activation, pooling, img_size, test_loader, classes, device):
-
-    model = BaseCNN(activation, pooling, img_size, elu_val = 1, lrelu_val = 0.01)
-    model.load_state_dict(torch.load(f'{activation}-{pooling}.pt'))
-    model = model.to(device)
+def loadModel(model_name, activation, pooling, img_size, test_loader, classes, device):
+    if model_name == 'resnet18':
+        model = ResNet18(len(classes))
+        model.load_state_dict(torch.load(f'{model_name}.pt'))
+        model = model.to(device)
+    elif model_name == 'effnetV2_S':
+        model = EfficientNet_V2_S(len(classes))
+        model.load_state_dict(torch.load(f'{model_name}.pt'))
+        model = model.to(device)
+    else:
+        model = BaseCNN(activation, pooling, img_size, elu_val = 1, lrelu_val = 0.01)
+        model.load_state_dict(torch.load(f'{activation}-{pooling}.pt'))
+        model = model.to(device)
 
     return testNN(model, test_loader, classes, device)
 
