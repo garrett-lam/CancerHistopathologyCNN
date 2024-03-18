@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.metrics import confusion_matrix
 
 def initModel(activation, pooling, img_size, device, elu_val = 1, lrelu_val = .01):
     model = BaseCNN(activation, pooling, img_size, elu_val = 1, lrelu_val = 0.01)
@@ -13,7 +14,7 @@ def initModel(activation, pooling, img_size, device, elu_val = 1, lrelu_val = .0
     return model
 
 def trainModel(model, activation, pooling, img_size, train_loader, valid_loader, criterion, optimizer, num_epochs, device):
-    early_stopper = EarlyStopper(patience=2, min_delta=3)
+    early_stopper = EarlyStopper(patience=2, min_delta=0.25)
     model_train_loss, model_valid_loss = train_and_validateNN(model, train_loader, valid_loader, criterion, optimizer, num_epochs, device, print_freq=100,
                                                                         early_stopper=early_stopper)
     if activation and pooling:
@@ -55,21 +56,14 @@ def loadModel(activation, pooling, img_size, test_loader, classes, device):
 
     return testNN(model, test_loader, classes, device)
 
-def confMtx(preds, labels, act, pool):
-    preds = [item for sublist in preds for item in sublist.tolist()]
-    count = [[0, 0, 0, 0, 0], 
-            [0, 0, 0, 0, 0], 
-            [0, 0, 0, 0, 0], 
-            [0, 0, 0, 0, 0], 
-            [0, 0, 0, 0, 0]]
-    
-    for j in range(5):
-        predsdigit = [preds for preds, labels in zip(preds, labels) if labels == j]
-        for i in range(len(predsdigit)):
-            count[j][predsdigit[i]] += 1
+# Turns ypred in tensor form and concatenates into a list
+def ypredToList(ypreds):
+    return [item for tensor in ypreds for item in tensor.tolist()]
 
-    sns.heatmap(count, annot = True, fmt = 'd', cmap = 'Blues', xticklabels = ['0', '1', '2', '3', '4'])
-    plt.title(f'{act}{pool} Model Confusion Matrix')
+def confMtx(labels, ypred, model_name, classes):
+    cm = confusion_matrix(labels, ypred)
+    sns.heatmap(cm, annot = True, fmt = 'd', cmap = 'Blues', xticklabels = classes, yticklabels=classes)
+    plt.title(f'{model_name} Model Confusion Matrix')
     plt.xlabel('Predicted')
     plt.ylabel('Actual')
     plt.show()
